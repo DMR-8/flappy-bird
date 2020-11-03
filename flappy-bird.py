@@ -89,6 +89,8 @@ bird_movement = 0
 
 # Background Assets
 bg_surface = pygame.image.load('assets/background-day.png').convert()
+bg_night_surface = pygame.image.load('assets/background-night.png').convert()
+is_day = True
 base_surface = pygame.image.load('assets/base.png').convert()
 base_x_pos = 0
 
@@ -147,6 +149,7 @@ while True:
                     new_game = False
                 else: 
                     new_game = True
+                    is_day = not is_day
                     random_color = random.choice(color_list)
                     bird_downflap = pygame.image.load('assets/' + random_color + 'bird-downflap.png').convert_alpha()
                     bird_midflap = pygame.image.load('assets/' + random_color + 'bird-midflap.png').convert_alpha()
@@ -170,7 +173,10 @@ while True:
 
         bird_surface,bird_rect = bird_animation()
     # Background
-    screen.blit(bg_surface,(0,0))
+    if (is_day) : 
+        screen.blit(bg_surface,(0,0))
+    else : 
+        screen.blit(bg_night_surface,(0,0))
 
     # Core Logic
     if game_active :

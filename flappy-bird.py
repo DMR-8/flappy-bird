@@ -82,7 +82,7 @@ game_font = pygame.font.Font('04B_19.ttf',40)
 game_active = False
 score = 0
 high_score = 0
-
+new_game = True
 # Physics Parameters
 gravity = 0.20
 bird_movement = 0
@@ -93,9 +93,9 @@ base_surface = pygame.image.load('assets/base.png').convert()
 base_x_pos = 0
 
 # Bird Assets
-bird_downflap = pygame.image.load('assets/bluebird-downflap.png').convert_alpha()
-bird_midflap = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
-bird_upflap = pygame.image.load('assets/bluebird-upflap.png').convert_alpha()
+bird_downflap = pygame.image.load('assets/yellowbird-downflap.png').convert_alpha()
+bird_midflap = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
+bird_upflap = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
 bird_frames = [bird_downflap,bird_midflap,bird_upflap]
 bird_index = 0
 bird_surface = bird_frames[bird_index]
@@ -114,9 +114,13 @@ pipe_height = [200,300,400]
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE,1200)
 
-#Game Over Screen
+# New Game Screen
+new_game_surface = pygame.image.load('assets/message.png').convert_alpha()
+new_game_rect = new_game_surface.get_rect(center = (144, 256))
+
+# Game Over Screen
 game_over_surface = pygame.image.load('assets/gameover.png').convert_alpha()
-game_over_rect = game_over_surface.get_rect(center =(144,256))
+game_over_rect = game_over_surface.get_rect(center = (144, 256))
 
 # Game Sounds
 flap_sound = pygame.mixer.Sound('sound/sfx_wing.wav')
@@ -132,14 +136,18 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if event.key ==pygame.K_SPACE and game_active:
+            if event.key == pygame.K_SPACE and game_active :
                 bird_movement = 0
-                bird_movement -= 6
+                bird_movement -= 5
                 flap_sound.play()
-            if event.key ==pygame.K_SPACE and game_active == False:
-                game_active = True
+            if event.key == pygame.K_SPACE and game_active == False :
+                if new_game :
+                    game_active = True
+                    new_game = False
+                else: 
+                    new_game = True
                 pipe_list.clear()
-                bird_rect.center =(50,256)
+                bird_rect.center = (50,256)
                 bird_movement = 0
                 score = 0
 
@@ -162,7 +170,7 @@ while True:
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird,bird_rect)
-        game_active =check_collision(pipe_list)
+        game_active = check_collision(pipe_list)
 
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
@@ -172,11 +180,17 @@ while True:
             score_sound.play()
             score_sound_countdown = 100
         score_display('current_game')
-    # Game Over Screen Display
     else :
-        screen.blit(game_over_surface,game_over_rect)
-        high_score = update_score(score,high_score)
-        score_display('game_over')
+        # New Game Display
+        if new_game:
+            bird_rect.center = (50,256)
+            screen.blit(bird_surface, bird_rect)
+            screen.blit(new_game_surface,new_game_rect)
+        # Game Over Screen Display
+        else:
+            screen.blit(game_over_surface, game_over_rect)
+            high_score = update_score(score, high_score)
+            score_display('game_over')
 
     # Game Base Animation
     base_x_pos -= 1

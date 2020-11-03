@@ -93,6 +93,7 @@ base_surface = pygame.image.load('assets/base.png').convert()
 base_x_pos = 0
 
 # Bird Assets
+color_list = ['yellow', 'blue', 'red']
 bird_downflap = pygame.image.load('assets/yellowbird-downflap.png').convert_alpha()
 bird_midflap = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
 bird_upflap = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
@@ -146,6 +147,13 @@ while True:
                     new_game = False
                 else: 
                     new_game = True
+                    random_color = random.choice(color_list)
+                    bird_downflap = pygame.image.load('assets/' + random_color + 'bird-downflap.png').convert_alpha()
+                    bird_midflap = pygame.image.load('assets/' + random_color + 'bird-midflap.png').convert_alpha()
+                    bird_upflap = pygame.image.load('assets/' + random_color + 'bird-upflap.png').convert_alpha()
+                    bird_frames = [bird_downflap,bird_midflap,bird_upflap]
+                    bird_index = 0
+                    bird_surface = bird_frames[bird_index]
                 pipe_list.clear()
                 bird_rect.center = (50,256)
                 bird_movement = 0
@@ -163,9 +171,9 @@ while True:
         bird_surface,bird_rect = bird_animation()
     # Background
     screen.blit(bg_surface,(0,0))
-    
+
     # Core Logic
-    if game_active:
+    if game_active :
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
@@ -176,14 +184,14 @@ while True:
         draw_pipes(pipe_list)
         score += 0.01
         score_sound_countdown -= 1
-        if score_sound_countdown <=0 :
+        if score_sound_countdown <= 0 :
             score_sound.play()
             score_sound_countdown = 100
         score_display('current_game')
     else :
         # New Game Display
         if new_game:
-            bird_rect.center = (50,256)
+            bird_rect = bird_surface.get_rect(center = (50,256))
             screen.blit(bird_surface, bird_rect)
             screen.blit(new_game_surface,new_game_rect)
         # Game Over Screen Display
